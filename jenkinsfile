@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout From Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/luckysuie/luckyspringpetclinic.git'
+                git branch: 'main', url: 'https://github.com/ariges/SprintbootAPP.git'
             }
         }
 
@@ -53,9 +53,9 @@ pipeline {
                 withSonarQubeEnv('sonarserver') {
                     sh '''
                         $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.organization=sonarproject456 \
+                        -Dsonar.organization=sonarproject4567 \
                         -Dsonar.projectName=jenkins \
-                        -Dsonar.projectKey=sonarproject456_jenkins789 \
+                        -Dsonar.projectKey=sonarproject4567_jenkins \
                         -Dsonar.sources=src \
                         -Dsonar.java.binaries=target/classes \
                         -Dsonar.host.url=https://sonarcloud.io
@@ -70,8 +70,8 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh '''
                         mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=sonarproject456_jenkins789 \
-                        -Dsonar.organization=sonarproject456 \
+                        -Dsonar.projectKey=sonarproject4567_jenkins \
+                        -Dsonar.organization=sonarproject4567 \
                         -Dsonar.host.url=https://sonarcloud.io \
                         -Dsonar.login=$SONAR_TOKEN \
                         -Dsonar.qualitygate.wait=false
