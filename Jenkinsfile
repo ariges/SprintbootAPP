@@ -25,13 +25,18 @@ pipeline {
             }
         }
 
-       stage ('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarserver') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=springboot -Dsonar.projectKey=sonarproject4567_springboot ''' 
-                                    }
-            }
+       stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('sonarserver') {
+            sh '''
+                sonar-scanner \
+                -Dsonar.projectName=springboot \
+                -Dsonar.projectKey=sonarproject4567_springboot \
+                -Dsonar.sources=.
+            '''
         }
+    }
+}
         
         
         stage('Build Docker Image') {
