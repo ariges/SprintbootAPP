@@ -17,27 +17,7 @@ pipeline {
             }
         }
 
-        stage('Maven Validate') {
-            steps {
-                echo 'Validating the project...'
-                sh 'mvn validate'
-            }
-        }
-
-        stage('Maven Compile') {
-            steps {
-                echo 'Compiling the project...'
-                sh 'mvn compile'
-            }
-        }
-
-        stage('Maven Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'mvn test'
-            }
-        }
-
+        
         stage('Maven Package') {
             steps {
                 echo 'Packaging the project...'
@@ -45,41 +25,15 @@ pipeline {
             }
         }
 
-        stage('SonarCloud Analysis') {
-            environment {
-                SCANNER_HOME = tool 'sonar-scanner' // Matches tool config in Jenkins
-            }
+       stage ('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarserver') {
-                    sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.organization=sonarproject4567 \
-                        -Dsonar.projectName=jenkins \
-                        -Dsonar.projectKey=sonarproject4567_jenkins \
-                        -Dsonar.sources=src \
-                        -Dsonar.java.binaries=target/classes \
-                        -Dsonar.host.url=https://sonarcloud.io
-                    '''
-                }
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=springboot -Dsonar.projectKey=sonarproject4567_springboot ''' 
+                                    }
             }
         }
-
-        stage('Publish Sonar Report') {
-            steps {
-                echo 'Publishing SonarCloud report...'
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=sonarproject4567_jenkins \
-                        -Dsonar.organization=sonarproject4567 \
-                        -Dsonar.host.url=https://sonarcloud.io \
-                        -Dsonar.login=$SONAR_TOKEN \
-                        -Dsonar.qualitygate.wait=false
-                    '''
-                }
-            }
-        }
-
+        
+        
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
